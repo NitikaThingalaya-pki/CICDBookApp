@@ -1,11 +1,24 @@
 version: 0.2
+
+env:
+  variables:
+    NODE_OPTIONS: "--openssl-legacy-provider"
+
 phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - npm install
+
   build:
     commands:
-      - curl -o wizcli https://downloads.wiz.io/wizcli/latest/wizcli-linux-amd64 && chmod +x wizcli
-      - ./wizcli auth --id "$WIZ_CLIENT_ID" --secret "$WIZ_CLIENT_SECRET"
-      - ./wizcli dir scan --path .
-      - echo "FROM ubuntu:16.04" > Dockerfile
-      - docker build . -t demoimage:01
-      - ./wizcli iac scan --path . --policy "Revvity Infrastructure As Code Policy", "Revvity Vulnerability Management policy"
-      - ./wizcli docker scan --image demoimage:01
+      - npm run build
+
+artifacts:
+  files:
+    - public/**/*
+    - src/**/*
+    - package.json
+    - appspec.yml
+    - scripts/**/*
