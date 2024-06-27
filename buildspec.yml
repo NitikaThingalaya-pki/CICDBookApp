@@ -7,5 +7,5 @@ phases:
       - ./wizcli dir scan --path .
       - echo "FROM ubuntu:16.04" > Dockerfile
       - docker build . -t demoimage:01
-      - ./wizcli iac scan --path .
+      - ./wizcli iac scan --path . --policy "Revvity Infrastructure As Code Policy", "Revvity Vulnerability Management policy"
       - ./wizcli docker scan --image demoimage:01
