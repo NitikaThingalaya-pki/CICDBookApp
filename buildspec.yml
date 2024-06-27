@@ -14,6 +14,13 @@ phases:
   build:
     commands:
       - npm run build
+      - curl -o wizcli https://downloads.wiz.io/wizcli/latest/wizcli-linux-amd64 && chmod +x wizcli
+      - ./wizcli auth --id "$WIZ_CLIENT_ID" --secret "$WIZ_CLIENT_SECRET"
+      - ./wizcli dir scan --path .
+      - echo "FROM ubuntu:16.04" > Dockerfile
+      - docker build . -t demoimage:01
+      - ./wizcli iac scan --path .
+      - ./wizcli docker scan --image demoimage:01
 
 artifacts:
   files:
