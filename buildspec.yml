@@ -1,32 +1,11 @@
 version: 0.2
-
 phases:
-  install:
-    runtime-versions:
-      python: 3.8
-    commands:
-      - pip install wiz-cli
-
-  pre_build:
-    commands:
-      - echo "Scanning Github. Starting pre-build phase..."
-      - wiz scan --repo-url https://github.com/NitikaThingalaya-pki/CICDBookApp --branch main
-
   build:
     commands:
-      - echo "Starting build phase..."
-      - if wiz scan --repo-url https://github.com/NitikaThingalaya-pki/CICDBookApp --branch main | grep -q "issues found"; then
-          echo "Issues found in the repository. Aborting deployment.";
-          exit 1;
-        else
-          echo "No issues found. Proceeding with deployment.";
-        fi
-
-  post_build:
-    commands:
-      - echo "Starting post-build phase..."
-      - # Add your deployment commands here
-
-artifacts:
-  files:
-    - '**/*'
+      - curl -o wizcli https://downloads.wiz.io/wizcli/latest/wizcli-linux-amd64 && chmod +x wizcli
+      - ./wizcli auth --id "$WIZ_CLIENT_ID" --secret "$WIZ_CLIENT_SECRET"
+      - ./wizcli dir scan --path .
+      - echo "FROM ubuntu:16.04" > Dockerfile
+      - docker build . -t demoimage:01
+      - ./wizcli iac scan --path .
+      - ./wizcli docker scan --image demoimage:01
